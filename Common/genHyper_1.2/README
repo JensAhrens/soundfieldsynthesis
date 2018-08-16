@@ -1,0 +1,55 @@
+This file expplains the compilation and usage of the included genHyper_mex.f90 mex file.
+
+genHyper_mex.f90 is meant to be a direct, faster replacement for genHyper.m for those who wish to use it.
+
+One little inconvenience with genHyper_mex.mex* is that you have to call this with complex a and b explicitly. You also
+have to mex this file (it works with intel fortran for linux (free for academic use)). To do this, install some
+fortran90, then set up mex. The relevant part of my mexopts.sh for Intel's fortran90 compiler is:
+
+            FC='ifort'
+            FFLAGS='-fPIC -r8 '
+            intelLibs='-L/opt/intel_fc_80/lib'
+            FLIBS="$RPATH $MLIBS $intelLibs -lm"
+            FOPTIMFLAGS='-O3'
+            FDEBUGFLAGS='-g'
+            LD="g77"
+            LDEXTENSION='.mexglx'
+            LDFLAGS="-pthread -shared -Wl,--version-script,$TMW_ROOT/extern/lib/$Arch/$MAPFILE"
+            LDOPTIMFLAGS=$FOPTIMFLAGS
+            LDDEBUGFLAGS='-g'
+            POSTLINK_CMDS=':'
+
+
+My matlab session looks like the following. The same call that took 3.4 seconds in native matlab now takes .04 seconds.
+
+>> mex genHyper_mex.f90
+>> t=cputime;pfq=genHyper_mex(complex(3,0),complex(3.5,0),300,0,0,20),cputime-t
+
+pfq =
+     1.85730710917124e+129
+ans =
+        0.04
+>> t=cputime;pfq=genHyper_mex(complex(3,0),complex(3.5,0),300,0,0,20),cputime-t
+
+pfq =
+     1.85730710917124e+129
+ans =
+        0.04
+
+The original genHyper.m:
+>> t=cputime;pfq=genHyper(complex(3,0),complex(3.5,0),300,0,0,20),cputime-t
+pfq =
+     1.85730710917124e+129
+ans =
+                       3.4
+>> t=cputime;pfq=genHyper(complex(3,0),complex(3.5,0),300,0,0,20),cputime-t
+pfq =
+     1.85730710917124e+129
+ans =
+                      3.39
+>>
+
+
+
+Note how you have to specify a complex array even though the imaginary part is 0. This is a fortran requirement. You
+also have to explicitly input lnpfq,ix,nsigfig as parameters; they are no longer optional.
