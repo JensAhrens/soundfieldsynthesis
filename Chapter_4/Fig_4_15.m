@@ -35,11 +35,12 @@ x_0     = R * cos( alpha_0 );
 y_0     = R * sin( alpha_0 );
 
 % Eq. (4.31)
-D = sqrt( 8*pi .* k .* y_ref / i ) .*  cos( theta_pw - alpha_0  ) .* exp( -1i .* k .* cos( theta_pw - alpha_0 ) ) ;
+D = - sqrt( 8*pi .* 1i .* k .* y_ref ) .*  cos( theta_pw - alpha_0 ) .* exp( -1i .* k .* R .* cos( theta_pw - alpha_0 ) );
+
 
 % window w( alpha_0 )
-D( find( alpha_0 / pi < 1 ) ) = 0;                          
-D( find( alpha_0 / pi > 2 ) ) = 0;
+D( alpha_0 / pi < 1 ) = 0;                          
+D( alpha_0 / pi > 2 ) = 0;
 
 % initialize D_ring_mS
 D_ring_mS = zeros( length(f), 2*M+1 );
@@ -59,7 +60,7 @@ figure;
 
 imagesc( -M : M, f, 20*log10( abs( D_ring_mS ) ), [ -30 10 ] );
 turn_imagesc;
-colormap gray; 
+%colormap gray; 
 revert_colormap;
 colorbar;
 axis square;
