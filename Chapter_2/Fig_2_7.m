@@ -30,8 +30,8 @@ elseif ( subfigure == 'd' )
 end
 
 % propagation direction of plane wave
-theta_pw = pi/2;
-phi_pw   = pi/2;
+phi_pw   = pi/2; % azimuth
+theta_pw = pi/2; % colatitude
 
 f = 1000;
 c = 343;
@@ -46,8 +46,8 @@ z          = 0;
 
 % convert to spherical coordinates
 r     = sqrt( x.^2 + y.^2 );
-alpha = atan2( y, x );
-beta  = pi/2;
+alpha = atan2( y, x ); % azimuth
+beta  = pi/2;          % colatitude
 
 % initialze S
 S = zeros( size( x ) );
@@ -58,7 +58,7 @@ for n = 0 : N-1
     
     for m = -n : n
         
-        S_breve = 4.*pi .* 1i.^( -n ) .* sphharm( n, -m, phi_pw, theta_pw );
+        S_breve = 4.*pi .* 1i.^( -n ) .* sphharm( n, -m, theta_pw, phi_pw );
        
         S = S + S_breve .* sphbesselj( n, k.*r ) .* sphharm( n, m, beta, alpha );
 
